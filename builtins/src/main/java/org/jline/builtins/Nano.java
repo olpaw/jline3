@@ -263,16 +263,18 @@ public class Nano implements Editor {
             }
             byte[] bytes = bos.toByteArray();
 
-            try {
-                UniversalDetector detector = new UniversalDetector(null);
-                detector.handleData(bytes, 0, bytes.length);
-                detector.dataEnd();
-                if (detector.getDetectedCharset() != null) {
-                    charset = Charset.forName(detector.getDetectedCharset());
-                }
-            } catch (Throwable t) {
-                // Ignore
-            }
+            // Removed to avoid the optional dependency during native-image building.
+            //
+            // try {
+            //     UniversalDetector detector = new UniversalDetector(null);
+            //     detector.handleData(bytes, 0, bytes.length);
+            //     detector.dataEnd();
+            //     if (detector.getDetectedCharset() != null) {
+            //         charset = Charset.forName(detector.getDetectedCharset());
+            //     }
+            // } catch (Throwable t) {
+            //     // Ignore
+            // }
 
             // TODO: detect format, do not eat last newline
             try (BufferedReader reader = new BufferedReader(
