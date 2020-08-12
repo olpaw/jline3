@@ -21,12 +21,16 @@ import java.nio.charset.Charset;
 public class JnaSupportImpl implements JnaSupport {
     @Override
     public Pty current() throws IOException {
-        return JnaNativePty.current();
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        //return JnaNativePty.current();
     }
 
     @Override
     public Pty open(Attributes attributes, Size size) throws IOException {
-        return JnaNativePty.open(attributes, size);
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        // return JnaNativePty.open(attributes, size);
     }
 
     @Override
