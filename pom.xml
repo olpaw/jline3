@@ -347,6 +347,33 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.jline.*</include>
+                        </includes>
+                    </artifactSet>
+                    <finalName>graalvm-shaded-jline3</finalName>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.jline</pattern>
+                            <shadedPattern>org.graalvm.shaded.org.jline</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>3.5.0</version>
