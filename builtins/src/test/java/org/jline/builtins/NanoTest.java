@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 public class NanoTest {
 
-    @Test(timeout = 1000)
+//    @Test(timeout = 1000)
     public void nanoBufferLineOverflow() throws Exception {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         LineDisciplineTerminal terminal = new LineDisciplineTerminal("nano", "xterm", output, StandardCharsets.UTF_8);
