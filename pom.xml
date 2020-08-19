@@ -428,11 +428,11 @@
                             <include>org.jline.*</include>
                         </includes>
                     </artifactSet>
-                    <finalName>graalvm-shaded-jline3</finalName>
+                    <finalName>jline3-shadowed-3.13.2</finalName>
                     <relocations>
                         <relocation>
                             <pattern>org.jline</pattern>
-                            <shadedPattern>org.graalvm.shaded.org.jline</shadedPattern>
+                            <shadedPattern>org.graalvm.shadowed.org.jline</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>
