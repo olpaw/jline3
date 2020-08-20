@@ -96,6 +96,7 @@
         <graal.version>19.3.1</graal.version>
         
         <surefire.argLine />
+        <graalvm.shadowed.version>0</graalvm.shadowed.version>
     </properties>
 
     <prerequisites>
@@ -428,7 +429,7 @@
                             <include>org.jline.*</include>
                         </includes>
                     </artifactSet>
-                    <finalName>jline3-shadowed-3.13.2</finalName>
+                    <finalName>jline3-shadowed-3.13.2.${graalvm.shadowed.version}</finalName>
                     <relocations>
                         <relocation>
                             <pattern>org.jline</pattern>
