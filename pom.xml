@@ -90,7 +90,7 @@
         <findbugs.version>3.0.2</findbugs.version>
 
         <surefire.argLine />
-        <graalvm.shadowed.version>0</graalvm.shadowed.version>
+        <graalvm.shadowed.version>1</graalvm.shadowed.version>
     </properties>
 
     <prerequisites>
