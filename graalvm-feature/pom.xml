@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2002-2016, the original author or authors.
+
+    This software is distributable under the BSD license. See the terms of the
+    BSD license in the documentation provided with this software.
+
+    https://opensource.org/licenses/BSD-3-Clause
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jline</groupId>
+        <artifactId>jline-parent</artifactId>
+        <version>3.13.2</version>
+    </parent>
+
+    <artifactId>graalvm-feature</artifactId>
+    <name>GraalVM Feature</name>
+
+    <dependencies>
+        <dependency>
+           <groupId>org.graalvm.nativeimage</groupId>
+           <artifactId>library-support</artifactId>
+           <version>20.2.0</version>
+        </dependency>
+    </dependencies>
+</project>
