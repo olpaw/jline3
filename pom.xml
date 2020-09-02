@@ -96,7 +96,7 @@
         <graal.version>19.3.1</graal.version>
         
         <surefire.argLine />
-        <graalvm.shadowed.version>0</graalvm.shadowed.version>
+        <graalvm.shadowed.version>1</graalvm.shadowed.version>
     </properties>
 
     <prerequisites>
