@@ -168,6 +168,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.jline</groupId>
+                <artifactId>graalvm-feature</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.fusesource.jansi</groupId>
                 <artifactId>jansi</artifactId>
                 <version>${jansi.version}</version>
@@ -355,6 +361,7 @@
                     <artifactSet>
                         <includes>
                             <include>org.jline.*</include>
+                            <include>com.oracle.svm.thirdparty.jline.*</include>
                         </includes>
                     </artifactSet>
                     <finalName>jline3-shadowed-3.13.2.${graalvm.shadowed.version}</finalName>
@@ -536,6 +543,7 @@
         <module>style</module>
         <module>jline</module>
         <module>demo</module>
+        <module>graalvm-feature</module>
     </modules>
 
 </project>
