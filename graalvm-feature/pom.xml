@@ -16,7 +16,7 @@
     <parent>
         <groupId>org.jline</groupId>
         <artifactId>jline-parent</artifactId>
-        <version>3.13.2</version>
+        <version>3.16.0</version>
     </parent>
 
     <artifactId>graalvm-feature</artifactId>

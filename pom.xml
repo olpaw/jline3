@@ -94,9 +94,8 @@
         <groovy.version>3.0.4</groovy.version>
         <ivy.version>2.5.0</ivy.version>
         <graal.version>19.3.1</graal.version>
-        
         <surefire.argLine />
-        <graalvm.shadowed.version>1</graalvm.shadowed.version>
+        <graalvm.shadowed.version>0</graalvm.shadowed.version>
     </properties>
 
     <prerequisites>
@@ -436,7 +435,7 @@
                             <include>com.oracle.svm.thirdparty.jline.*</include>
                         </includes>
                     </artifactSet>
-                    <finalName>jline3-shadowed-3.13.2.${graalvm.shadowed.version}</finalName>
+                    <finalName>jline3-shadowed-3.16.0.${graalvm.shadowed.version}</finalName>
                     <relocations>
                         <relocation>
                             <pattern>org.jline</pattern>
