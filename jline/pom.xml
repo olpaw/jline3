@@ -30,7 +30,6 @@
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
@@ -376,6 +375,48 @@
                     </instructions>
                 </configuration>
             </plugin>
+            <!--
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>com.oracle.svm.thirdparty.jline.*</include>
+                            <include>org.fusesource.jansi:jansi*</include>
+                            <include>org.jline.*</include>
+                        </includes>
+                    </artifactSet>
+                    <finalName>jline3-shadowed-3.16.0.${graalvm.shadowed.version}</finalName>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.jline</pattern>
+                            <shadedPattern>org.graalvm.shadowed.org.jline</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.fusesource</pattern>
+                            <shadedPattern>org.graalvm.shadowed.org.fusesource</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.sun.jna</pattern>
+                            <shadedPattern>org.graalvm.shadowed.com.sun.jna</shadedPattern>
+                        </relocation>
+                    </relocations>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
        </plugins>
     </build>
 

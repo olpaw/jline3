@@ -95,7 +95,7 @@
         <ivy.version>2.5.0</ivy.version>
         <graal.version>19.3.1</graal.version>
         <surefire.argLine />
-        <graalvm.shadowed.version>0</graalvm.shadowed.version>
+        <graalvm.shadowed.version>1</graalvm.shadowed.version>
     </properties>
 
     <prerequisites>
@@ -261,7 +261,7 @@
                 <artifactId>groovy-console</artifactId>
                 <version>${groovy.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.graalvm.sdk</groupId>
                 <artifactId>graal-sdk</artifactId>
@@ -272,7 +272,7 @@
                 <groupId>org.apache.ivy</groupId>
                 <artifactId>ivy</artifactId>
                  <version>${ivy.version}</version>
-            </dependency>        
+            </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -431,8 +431,9 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>org.jline.*</include>
                             <include>com.oracle.svm.thirdparty.jline.*</include>
+                            <include>org.fusesource.jansi:jansi*</include>
+                            <include>org.jline.*</include>
                         </includes>
                     </artifactSet>
                     <finalName>jline3-shadowed-3.16.0.${graalvm.shadowed.version}</finalName>
@@ -440,6 +441,10 @@
                         <relocation>
                             <pattern>org.jline</pattern>
                             <shadedPattern>org.graalvm.shadowed.org.jline</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.fusesource</pattern>
+                            <shadedPattern>org.graalvm.shadowed.org.fusesource</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>
@@ -580,7 +585,7 @@
                 <groupId>org.graalvm.nativeimage</groupId>
                 <artifactId>native-image-maven-plugin</artifactId>
                 <version>${graal.version}</version>
-            </plugin>            
+            </plugin>
         </plugins>
     </build>
 
