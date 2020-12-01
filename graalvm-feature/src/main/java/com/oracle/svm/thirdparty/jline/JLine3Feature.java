@@ -28,10 +28,8 @@ package com.oracle.svm.thirdparty.jline;
 import com.oracle.svm.core.jdk.Resources;
 import com.oracle.svm.core.jni.JNIRuntimeAccess;
 import com.oracle.svm.util.ReflectionUtil;
-import org.graalvm.nativeimage.Platform;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
-import org.graalvm.nativeimage.hosted.RuntimeReflection;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -43,6 +41,7 @@ import java.util.stream.Stream;
 
 public final class JLine3Feature implements Feature {
 
+    public static final String TERMINAL_BUILDER = "org.graalvm.shadowed.org.jline.terminal.TerminalBuilder";
     private static final List<String> RESOURCES = Arrays.asList(
             "capabilities.txt",
             "colors.txt",
@@ -58,8 +57,6 @@ public final class JLine3Feature implements Feature {
             "xterm.caps",
             "xterm-256color.caps");
     private static final String RESOURCE_PATH = "org/graalvm/shadowed/org/jline/utils/";
-    // private static final String JNA_SUPPORT_IMPL = "org.graalvm.shadowed.org.jline.terminal.impl.jna.JnaSupportImpl";
-
     /**
      * List of the classes that access the JNI library.
      */
@@ -78,7 +75,6 @@ public final class JLine3Feature implements Feature {
             "org.graalvm.shadowed.org.fusesource.jansi.internal.Kernel32$FOCUS_EVENT_RECORD",
             "org.graalvm.shadowed.org.fusesource.jansi.internal.Kernel32$MENU_EVENT_RECORD",
             "org.graalvm.shadowed.org.fusesource.jansi.internal.Kernel32$INPUT_RECORD");
-
     /**
      * Other classes that need to be initialized at run time because they reference the JNI classes
      * and/or have static state that depends on run time state.
@@ -89,45 +85,37 @@ public final class JLine3Feature implements Feature {
             "org.graalvm.shadowed.org.fusesource.jansi.WindowsAnsiProcessor",
             "org.graalvm.shadowed.org.jline.terminal.impl.jna.win.JnaWinSysTerminal",
             "org.graalvm.shadowed.org.jline.terminal.impl.jansi.win.WindowsAnsiWriter",
-            "org.graalvm.shadowed.org.jline.terminal.impl.jansi.win.JansiWinConsoleWriter");
-
-    Class<?> terminalFactoryClass;
+            "org.graalvm.shadowed.org.jline.terminal.impl.jansi.win.JansiWinConsoleWriter",
+            "org.graalvm.shadowed.org.fusesource.jansi.internal.CLibrary",
+            "org.graalvm.shadowed.org.fusesource.jansi.internal.CLibrary$Termios",
+            "org.graalvm.shadowed.org.fusesource.jansi.internal.CLibrary$WinSize");
+    private AtomicBoolean resourceRegistered = new AtomicBoolean();
 
     @Override
     public boolean isInConfiguration(IsInConfigurationAccess access) {
-        terminalFactoryClass = access.findClassByName("org.graalvm.shadowed.org.jline.terminal.TerminalBuilder");
-        return terminalFactoryClass != null;
+        return access.findClassByName(TERMINAL_BUILDER) != null;
     }
 
     @Override
     public void duringSetup(DuringSetupAccess access) {
-        if (Platform.includedIn(Platform.WINDOWS.class)) {
-            Stream.concat(JNI_CLASS_NAMES.stream(), RUNTIME_INIT_CLASS_NAMES.stream())
-                    .map(access::findClassByName)
-                    .filter(Objects::nonNull)
-                    .forEach(RuntimeClassInitialization::initializeAtRunTime);
-        }
+        Stream.concat(JNI_CLASS_NAMES.stream(), RUNTIME_INIT_CLASS_NAMES.stream())
+                .map(access::findClassByName)
+                .filter(Objects::nonNull)
+                .forEach(RuntimeClassInitialization::initializeAtRunTime);
     }
 
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
-        // Object[] createMethods = Arrays.stream(terminalFactoryClass.getDeclaredMethods())
-        //         .filter(m -> Modifier.isStatic(m.getModifiers()) && m.getName().equals("doBuild"))
-        //         .toArray();
-        // access.registerReachabilityHandler(JLine3Feature::registerTerminalConstructor, createMethods);
-
-        if (Platform.includedIn(Platform.WINDOWS.class)) {
-            /*
-             * Each listed class has a native method named "init" that initializes all declared
-             * fields of the class using JNI. So when the "init" method gets reachable (which means
-             * the class initializer got reachable), we need to register all fields for JNI access.
-             */
-            JNI_CLASS_NAMES.stream()
-                    .map(access::findClassByName)
-                    .filter(Objects::nonNull)
-                    .map(jniClass -> ReflectionUtil.lookupMethod(jniClass, "init"))
-                    .forEach(initMethod -> access.registerReachabilityHandler(a -> registerJNIFields(initMethod), initMethod));
-        }
+        /*
+         * Each listed class has a native method named "init" that initializes all declared
+         * fields of the class using JNI. So when the "init" method gets reachable (which means
+         * the class initializer got reachable), we need to register all fields for JNI access.
+         */
+        JNI_CLASS_NAMES.stream()
+                .map(access::findClassByName)
+                .filter(Objects::nonNull)
+                .map(jniClass -> ReflectionUtil.lookupMethod(jniClass, "init"))
+                .forEach(initMethod -> access.registerReachabilityHandler(a -> registerJNIFields(initMethod), initMethod));
         for (String resource : RESOURCES) {
             String resourcePath = RESOURCE_PATH + resource;
             final InputStream resourceAsStream = ClassLoader.getSystemResourceAsStream(resourcePath);
@@ -143,22 +131,6 @@ public final class JLine3Feature implements Feature {
             /* The native library that is included as a resource in the .jar file. */
             String resource = "META-INF/native/windows64/jansi.dll";
             Resources.registerResource(resource, jniClass.getClassLoader().getResourceAsStream(resource));
-        }
-    }
-
-    private AtomicBoolean resourceRegistered = new AtomicBoolean();
-
-
-    private static void registerTerminalConstructor(DuringAnalysisAccess access) {
-
-        Class<?> terminalClass = access.findClassByName(Platform.includedIn(Platform.WINDOWS.class) ? "jline.AnsiWindowsTerminal" : "jline.UnixTerminal");
-        if (terminalClass != null) {
-            RuntimeReflection.register(terminalClass);
-            RuntimeReflection.register(terminalClass.getDeclaredConstructors());
-        }
-        terminalClass = access.findClassByName("org.graalvm.shadowed.org.jline.terminal.impl.jna.JnaSupportImpl");
-        if (terminalClass != null) {
-            RuntimeReflection.register(terminalClass);
         }
     }
 }
