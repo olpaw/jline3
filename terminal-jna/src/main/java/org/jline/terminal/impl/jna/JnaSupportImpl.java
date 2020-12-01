@@ -14,6 +14,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.impl.jna.win.JnaWinSysTerminal;
 import org.jline.terminal.spi.JnaSupport;
 import org.jline.terminal.spi.Pty;
+import org.jline.utils.OSUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -21,16 +22,12 @@ import java.nio.charset.Charset;
 public class JnaSupportImpl implements JnaSupport {
     @Override
     public Pty current() throws IOException {
-        // We don't want any support for JNA on native-image
-        throw new UnsupportedOperationException();
-        //return JnaNativePty.current();
+            return JnaNativePty.current();
     }
 
     @Override
     public Pty open(Attributes attributes, Size size) throws IOException {
-        // We don't want any support for JNA on native-image
-        throw new UnsupportedOperationException();
-        // return JnaNativePty.open(attributes, size);
+         return JnaNativePty.open(attributes, size);
     }
 
     @Override
