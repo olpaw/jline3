@@ -11,10 +11,8 @@ package org.jline.terminal.impl.jna;
 import org.jline.terminal.Attributes;
 import org.jline.terminal.Size;
 import org.jline.terminal.Terminal;
-import org.jline.terminal.impl.jna.win.JnaWinSysTerminal;
 import org.jline.terminal.spi.JnaSupport;
 import org.jline.terminal.spi.Pty;
-import org.jline.utils.OSUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -22,27 +20,38 @@ import java.nio.charset.Charset;
 public class JnaSupportImpl implements JnaSupport {
     @Override
     public Pty current() throws IOException {
-            return JnaNativePty.current();
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        // return JnaNativePty.current();
+
     }
 
     @Override
     public Pty open(Attributes attributes, Size size) throws IOException {
-         return JnaNativePty.open(attributes, size);
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        // return JnaNativePty.open(attributes, size);
     }
 
     @Override
     public Terminal winSysTerminal(String name, String type, boolean ansiPassThrough, Charset encoding, int codepage, boolean nativeSignals, Terminal.SignalHandler signalHandler) throws IOException {
-        return winSysTerminal(name, type, ansiPassThrough, encoding, codepage, nativeSignals, signalHandler, false);
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        // return winSysTerminal(name, type, ansiPassThrough, encoding, codepage, nativeSignals, signalHandler, false);
     }
 
     @Override
     public Terminal winSysTerminal(String name, String type, boolean ansiPassThrough, Charset encoding, int codepage, boolean nativeSignals, Terminal.SignalHandler signalHandler, boolean paused) throws IOException {
-        return JnaWinSysTerminal.createTerminal(name, type, ansiPassThrough, encoding, codepage, nativeSignals, signalHandler, paused);
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        // return JnaWinSysTerminal.createTerminal(name, type, ansiPassThrough, encoding, codepage, nativeSignals, signalHandler, paused);
     }
 
     @Override
     public boolean isWindowsConsole() {
-        return JnaWinSysTerminal.isWindowsConsole();
+        // We don't want any support for JNA on native-image
+        throw new UnsupportedOperationException();
+        // return JnaWinSysTerminal.isWindowsConsole();
     }
 
 }

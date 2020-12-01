@@ -431,7 +431,6 @@
                 <configuration>
                     <artifactSet>
                         <includes>
-                            <include>net.java.dev.jna:jna*</include>
                             <include>com.oracle.svm.thirdparty.jline.*</include>
                             <include>org.fusesource.jansi:jansi*</include>
                             <include>org.jline.*</include>
@@ -446,10 +445,6 @@
                         <relocation>
                             <pattern>org.fusesource</pattern>
                             <shadedPattern>org.graalvm.shadowed.org.fusesource</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>com.sun.jna</pattern>
-                            <shadedPattern>org.graalvm.shadowed.com.sun.jna</shadedPattern>
                         </relocation>
                     </relocations>
                     <transformers>
