@@ -89,7 +89,34 @@ public final class JLine3Feature implements Feature {
             "org.graalvm.shadowed.org.fusesource.jansi.internal.CLibrary",
             "org.graalvm.shadowed.org.fusesource.jansi.internal.CLibrary$Termios",
             "org.graalvm.shadowed.org.fusesource.jansi.internal.CLibrary$WinSize");
-    private AtomicBoolean resourceRegistered = new AtomicBoolean();
+
+    private final AtomicBoolean resourceRegistered;
+
+    private final Object module;
+    private final Method getResourceAsStream;
+
+    public JLine3Feature() {
+        resourceRegistered = new AtomicBoolean();
+
+        Method getModule;
+        try {
+            getModule = Class.class.getDeclaredMethod("getModule");
+        } catch (NoSuchMethodException e) {
+            getModule = null;
+        }
+
+        if (getModule != null) {
+            try {
+                module = getModule.invoke(JLine3Feature.class);
+                getResourceAsStream = module.getClass().getDeclaredMethod("getResourceAsStream", String.class);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Unable to make java.lang.Module.getResourceAsStream reflectively accessible", e);
+            }
+        } else {
+            module = null;
+            getResourceAsStream = null;
+        }
+    }
 
     @Override
     public boolean isInConfiguration(IsInConfigurationAccess access) {
@@ -118,7 +145,7 @@ public final class JLine3Feature implements Feature {
                 .forEach(initMethod -> access.registerReachabilityHandler(a -> registerJNIFields(initMethod), initMethod));
         for (String resource : RESOURCES) {
             String resourcePath = RESOURCE_PATH + resource;
-            final InputStream resourceAsStream = ClassLoader.getSystemResourceAsStream(resourcePath);
+            final InputStream resourceAsStream = getResourceAsStream(resourcePath);
             Resources.registerResource(resourcePath, resourceAsStream);
         }
     }
@@ -130,7 +157,19 @@ public final class JLine3Feature implements Feature {
         if (!resourceRegistered.getAndSet(true)) {
             /* The native library that is included as a resource in the .jar file. */
             String resource = "META-INF/native/windows64/jansi.dll";
-            Resources.registerResource(resource, jniClass.getClassLoader().getResourceAsStream(resource));
+            Resources.registerResource(resource, getResourceAsStream(resource));
+        }
+    }
+
+    private InputStream getResourceAsStream(String resourcePath) {
+        if (module == null) {
+            return ClassLoader.getSystemResourceAsStream(resourcePath);
+        } else {
+            try {
+                return (InputStream) getResourceAsStream.invoke(module, resourcePath);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException("Unable to reflectively call java.lang.Module.getResourceAsStream(" + resourcePath + ")", e);
+            }
         }
     }
 }
